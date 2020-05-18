@@ -12,6 +12,10 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 //MUI stuffs
 import Grid from '@material-ui/core/Grid';
 
+//import Redux stuffs
+import { connect } from 'react-redux';
+import { sigupUser } from '../redux/actions/userActions';
+
 const styles =({
     
     form:{
@@ -65,25 +69,7 @@ handleSubmit = (event)  =>
         confirmPassword:this.state.confirmPassword,
         handle:this.state.handle
     };
-    axios.post('/signup',newUserData)
-    .then(res=>{
-        console.log(res.data);
-        localStorage.setItem('FBIdToken',`Bearer ${res.data.token}`);
-        this.setState({
-            loading:false
-        });
-        this.props.history.push('/');
-    })
-    .catch(err=>
-        {
-            
-            this.setState({
-                errors:err.response.data.errors? err.response.data.errors: err.response.data,
-                loading:false
-                
-            })
-
-        });
+    this.props.sigupUser(newUserData,this.props.history);
 
 };
 
@@ -111,8 +97,8 @@ handleChange= (event) =>{
    
 render(){
     
-        const { classes }=this.props;
-        const { errors,loading }=this.state;
+        const { classes,UI:{loading} }=this.props;
+        const { errors }=this.state;
         return(
             <Grid container className={classes.form}>
                    <Grid item sm/>
@@ -196,10 +182,25 @@ render(){
             </Grid>
         )
     }
+componentWillReceiveProps(nextProps){
+        if(nextProps.UI.errors){
+        this.setState({errors:nextProps.UI.errors});
+        }
+    }
 }
 signup.propTypes={
-    classes:PropTypes.object.isRequired
+    classes:PropTypes.object.isRequired,
+    logoutUser:PropTypes.func.isRequired,
+
+    user:PropTypes.object.isRequired,
+    UI:PropTypes.object.isRequired
 }
-export default withStyles(styles)(signup);
+const mapStateToProps=(state)=>({
+    user:state.user,
+    UI:state.UI
+});
+
+
+export default connect(mapStateToProps,{sigupUser})(withStyles(styles)(signup));
 
 

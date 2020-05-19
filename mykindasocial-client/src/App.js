@@ -9,6 +9,7 @@ import axios from 'axios';
 import home from './pages/home';
 import login from './pages/login';
 import signup from './pages/signup';
+ 
 
      
 //import components
@@ -28,8 +29,7 @@ import { SET_AUTHENTICATED } from './redux/types';
 import { logoutUser,getUserData } from './redux/actions/userActions';
 
 
-//global variable
-//let authenticated;
+
 
 //create theme
 const theme=createMuiTheme(themeFile);
@@ -46,9 +46,9 @@ if(decodedToken.exp * 1000 < Date.now()){
     type:SET_AUTHENTICATED
   });
   axios.defaults.headers.common['Authorization']=token;
-  store.dispatch({
+  store.dispatch(
     getUserData()
-  });
+  );
 }
 
 }
